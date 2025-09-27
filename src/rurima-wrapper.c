@@ -3,7 +3,7 @@
 /*
  * This is a wrapper for rurima to set up the environment.
  * It prepends the directory of this binary to PATH,
- * and just simply execs rurima-real with the same arguments.
+ * and just simply execs rurima-static with the same arguments.
  * It also checks if the dependent binaries exist in the same directory.
  * If any of them is missing, it prints an error message and exits.
  * This binary is intended to be statically linked.
@@ -22,7 +22,7 @@ void init(void)
 	 * Check if the dependent binaries exist in the same directory.
 	 * If any of them is missing, print an error message and exit.
 	 * The dependent binaries are:
-	 * - rurima-real
+	 * - rurima-static
 	 * - file
 	 * - tar
 	 * - xz
@@ -47,10 +47,10 @@ void init(void)
 		}
 	}
 	char binary_path[PATH_MAX];
-	// Check rurima-real.
-	sprintf(binary_path, "%srurima-real", self_path);
+	// Check rurima-static.
+	sprintf(binary_path, "%srurima-static", self_path);
 	if (access(binary_path, X_OK) != 0) {
-		fprintf(stderr, "Error: cannot access the real binary at %s\n", binary_path);
+		fprintf(stderr, "Error: cannot access the static binary at %s\n", binary_path);
 		exit(1);
 	}
 	// Check file.
@@ -72,7 +72,6 @@ void init(void)
 		exit(1);
 	}
 	// Check sha256sum.
-	// TODO: static binary
 	sprintf(binary_path, "%ssha256sum", self_path);
 	if (access(binary_path, X_OK) != 0) {
 		fprintf(stderr, "Error: cannot access the sha256sum at %s\n", binary_path);
@@ -132,7 +131,7 @@ int main(int argc, char **argv)
 {
 	// Initialize the environment.
 	init();
-	// Fork and exec rurima-real.
+	// Fork and exec rurima-static.
 	pid_t pid = fork();
 	if (pid < 0) {
 		perror("fork");
@@ -140,7 +139,7 @@ int main(int argc, char **argv)
 	}
 	if (pid == 0) {
 		// Child process.
-		execvp("rurima-real", argv);
+		execvp("rurima-static", argv);
 		// If execvp returns, there was an error.
 		fprintf(stderr, "Error: execvp failed: %s\n", strerror(errno));
 		exit(1);

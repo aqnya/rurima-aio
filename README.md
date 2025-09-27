@@ -4,6 +4,3 @@ NOT COMPLETED YET, NOTHING TO REPORT.
 Currently aarch64 only, all-in-one pack of rurima binary and its dependencies.        
 # Notes:
 Some commands, including `rurima`, `file`, `curl`, are just wrappers of the real binaries.              
-# TODO:
-a+s newuidmap/newgidmap support.
-sha256sum support.
