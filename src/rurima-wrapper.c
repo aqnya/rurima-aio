@@ -30,6 +30,8 @@ void init(void)
 	 * - gzip
 	 * - curl
 	 * - proot
+	 * - newuidmap
+	 * - newgidmap
 	 * And prepend the directory of this binary to PATH.
 	 */
 	// Get the directory of this binary.
@@ -92,6 +94,18 @@ void init(void)
 	sprintf(binary_path, "%sproot", self_path);
 	if (access(binary_path, X_OK) != 0) {
 		fprintf(stderr, "Error: cannot access the proot at %s\n", binary_path);
+		exit(1);
+	}
+	// Check newuidmap.
+	sprintf(binary_path, "%snewuidmap", self_path);
+	if (access(binary_path, X_OK) != 0) {
+		fprintf(stderr, "Error: cannot access the newuidmap at %s\n", binary_path);
+		exit(1);
+	}
+	// Check newgidmap.
+	sprintf(binary_path, "%snewgidmap", self_path);
+	if (access(binary_path, X_OK) != 0) {
+		fprintf(stderr, "Error: cannot access the newgidmap at %s\n", binary_path);
 		exit(1);
 	}
 	// Prepend self_path to PATH.

@@ -7,3 +7,6 @@ gzip
 curl
 sha256sum
 proot
+out
+newuidmap
+newgidmap
