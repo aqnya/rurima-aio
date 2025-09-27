@@ -1,5 +1,5 @@
-# WIP:
-NOT COMPLETED YET, NOTHING TO REPORT.      
+# We need maintainers!
+I have less time to maintain this project :(      
 # What's this?
 Currently aarch64 only, all-in-one pack of rurima binary and its dependencies.        
 # Notes:
