@@ -42,14 +42,14 @@ jobs:
           sudo apt-get update
           sudo apt-get --no-install-recommends -y install \
             binutils build-essential libcap-dev libseccomp-dev make qemu-user-static xz-utils
-      - name: build source code
+      - name: Build ruri for container
         run: |
           cd build
           git clone --depth 1 https://github.com/moe-hacker/ruri.git
           cd ruri
           cc -Wl,--gc-sections -static src/*.c src/easteregg/*.c -o ruri -lcap -lseccomp -lpthread
           sudo cp ./ruri /usr/bin/ruri
-      - name: download latest minirootfs
+      - name: Download alpine rootfs
         env:
           URL: https://dl-cdn.alpinelinux.org/alpine/edge/releases
           ARCHITECTURE: aarch64
