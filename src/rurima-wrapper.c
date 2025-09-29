@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2025 Moe-hacker
+// This file is a part of rurima-aio project.
 /*
  * This is a wrapper for rurima to set up the environment.
  * It prepends the directory of this binary to PATH,

@@ -113,3 +113,4 @@ for i in *; do
 done
 chmod a+s newuidmap
 chmod a+s newgidmap
+EOF

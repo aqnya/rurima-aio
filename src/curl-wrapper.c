@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Moe-hacker
+// This file is a part of rurima-aio project.
 #include <unistd.h>
 #include <limits.h>
 #include <stdlib.h>
@@ -5,6 +8,11 @@
 #include <stdio.h>
 int main(int argc, char **argv)
 {
+	/*
+	 * This is a simple wrapper around the `curl` command to make sure it
+	 * always uses the bundled CA certificates and DNS servers.
+	 * TODO: If system has resolv.conf, and ca-certificates.crt, use them instead.
+	 */
 	char *command[argc + 11];
 	char *path = (char *)malloc(4096);
 	path[0] = '\0';
@@ -41,5 +49,6 @@ int main(int argc, char **argv)
 	free(path);
 	execv(command[0], command);
 	perror("execv");
+	fprintf(stderr, "Error: cannot execute %s\n", command[0]);
 	return 1;
 }
