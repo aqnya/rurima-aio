@@ -40,6 +40,13 @@ jobs:
           sudo apt-get update
           sudo apt-get --no-install-recommends -y install \
             binutils build-essential libcap-dev libseccomp-dev make qemu-user-static xz-utils
+      - name: build source code
+        run: |
+          cd build
+          git clone --depth 1 https://github.com/moe-hacker/ruri.git
+          cd ruri
+          cc -Wl,--gc-sections -static src/*.c src/easteregg/*.c -o ruri -lcap -lseccomp -lpthread
+          sudo cp ./ruri /usr/bin/ruri
       - name: download latest minirootfs
         env:
           URL: https://dl-cdn.alpinelinux.org/alpine/edge/releases
@@ -72,7 +79,7 @@ jobs:
           tar -cvf /$(uname -m).tar rurima-aio
           EOF
           sudo chmod +x alpine/build.sh
-          sudo ../ruri -a aarch64 -q /usr/bin/qemu-aarch64-static ./alpine /bin/sh /build.sh
+          sudo ruri -a aarch64 -q /usr/bin/qemu-aarch64-static ./alpine /bin/sh /build.sh
           sudo mv alpine/aarch64.tar ./aarch64.tar
       - name: Release
         uses: softprops/action-gh-release@v2
