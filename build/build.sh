@@ -99,7 +99,8 @@ cp ../rurima .
 cp ../curl .
 cp ../file .
 rm SHA256SUMS
-
+chmod 777 *
+chmod 755 certs
 cat << EOF > fix-perms.sh
 #!/bin/sh
 if [ "\$(id -u)" -ne 0 ]; then
