@@ -11,7 +11,6 @@ int main(int argc, char **argv)
 	/*
 	 * This is a simple wrapper around the `curl` command to make sure it
 	 * always uses the bundled CA certificates and DNS servers.
-	 * TODO: If system has resolv.conf, and ca-certificates.crt, use them instead.
 	 */
 	char *command[argc + 11];
 	char *path = (char *)malloc(4096);
