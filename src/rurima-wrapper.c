@@ -38,6 +38,8 @@ void init(void)
 	char *self_path = realpath("/proc/self/exe", NULL);
 	if (!self_path) {
 		perror("realpath");
+		fprintf(stderr, "Error: cannot resolve /proc/self/exe\n");
+		fprintf(stderr, "Make sure your /proc is mounted properly.\n");
 		exit(1);
 	}
 	for (int i = strlen(self_path) - 1; i >= 0; --i) {

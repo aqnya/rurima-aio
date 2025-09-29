@@ -9,6 +9,12 @@ int main(int argc, char **argv)
 	char *path = (char *)malloc(4096);
 	path[0] = '\0';
 	realpath("/proc/self/exe", path);
+	if (!path) {
+		perror("realpath");
+		fprintf(stderr, "Error: cannot resolve /proc/self/exe\n");
+		fprintf(stderr, "Make sure your /proc is mounted properly.\n");
+		return 1;
+	}
 	for (size_t i = strlen(path) - 1; i >= 0; i--) {
 		if (path[i] == '/') {
 			path[i] = '\0';
@@ -21,8 +27,8 @@ int main(int argc, char **argv)
 	command[1] = "--dns-servers";
 	command[2] = "1.1.1.1,8.8.8.8";
 	command[3] = "--capath";
-    char cert_path[4096];
-    sprintf(cert_path, "%s/certs", path);
+	char cert_path[4096];
+	sprintf(cert_path, "%s/certs", path);
 	command[4] = cert_path;
 	char ca_path[4096];
 	sprintf(ca_path, "%s/certs/ca-certificates.crt", path);
@@ -34,6 +40,6 @@ int main(int argc, char **argv)
 	command[argc + 6] = NULL;
 	free(path);
 	execv(command[0], command);
-    perror("execv");
-    return 1;
+	perror("execv");
+	return 1;
 }

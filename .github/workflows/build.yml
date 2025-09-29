@@ -32,15 +32,48 @@ jobs:
         run: |
           echo remote_version=${{ needs.check_update.outputs.remote_version }} | tee -a $GITHUB_ENV
           echo build_time=$(TZ=Asia/Shanghai date '+%Y%m%d%H%M') | tee -a $GITHUB_ENV
-      - uses: actions/checkout@v4
-      - uses: uraimo/run-on-arch-action@v2
-        name: Install packages
-        id: runcmd
-        with:
-          arch: aarch64
-          distro: ubuntu_latest
-          run: |
-           bash build/chroot-alpine.sh
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get --no-install-recommends -y install \
+            binutils build-essential libcap-dev libseccomp-dev make qemu-user-static xz-utils
+      - name: download latest minirootfs
+        env:
+          URL: https://dl-cdn.alpinelinux.org/alpine/edge/releases
+          ARCHITECTURE: aarch64
+        run: |
+          mkdir -p alpine
+
+          wget -q https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O yq
+          sudo mv yq /usr/local/bin/yq
+          sudo chmod +x /usr/local/bin/yq
+
+          FILE=$(curl -s "$URL/$ARCHITECTURE/latest-releases.yaml" | yq '.[] | select(.flavor == "alpine-minirootfs") | .file')
+          wget "$URL/$ARCHITECTURE/$FILE"
+          tar -xzf "$FILE" -C alpine
+      - name: Build AARCH64
+        run: |
+          cat << 'EOF' | sudo tee alpine/build.sh
+          #!/bin/sh
+          rm /etc/resolv.conf
+          echo "nameserver 1.1.1.1" > /etc/resolv.conf
+          echo https://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
+          apk update
+          apk add bash curl wget sudo coreutils clang make git
+          apk add wget make clang git xz-dev libintl libbsd-static libsemanage-dev libselinux-utils libselinux-static xz-libs zlib zlib-static libselinux-dev linux-headers libssl3 libbsd libbsd-dev gettext-libs gettext-static gettext-dev gettext python3 build-base openssl-misc openssl-libs-static openssl zlib-dev xz-dev openssl-dev automake libtool bison flex gettext autoconf gettext sqlite sqlite-dev pcre-dev wget texinfo docbook-xsl libxslt docbook2x musl-dev gettext gettext-asprintf gettext-dbg gettext-dev gettext-doc gettext-envsubst gettext-lang gettext-libs gettext-static
+          apk add upx
+          git clone https://github.com/rurioss/rurima-aio
+          cd rurima-aio
+          make
+          mv out rurima-aio
+          tar -cvf /$(uname -m).tar rurima-aio
+          EOF
+          sudo chmod +x alpine/build.sh
+          sudo ../ruri -a aarch64 -q /usr/bin/qemu-aarch64-static ./alpine /bin/sh /build.sh
+          sudo mv alpine/aarch64.tar ./aarch64.tar
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
