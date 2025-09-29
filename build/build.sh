@@ -101,6 +101,11 @@ cp ../file .
 rm SHA256SUMS
 chmod 777 *
 chmod 755 certs
+for i in $(ls); do
+    if [ -f "$i" ]; then
+        upx $i
+    fi
+done
 cat << EOF > fix-perms.sh
 #!/bin/sh
 if [ "\$(id -u)" -ne 0 ]; then
